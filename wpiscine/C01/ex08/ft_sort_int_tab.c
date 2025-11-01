@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 19:02:51 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/01 19:17:02 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/01 19:57:42 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ static void	ft_swap(int *a, int *b)
 void	ft_sort_int_tab(int *tab, int size)
 {
 	int	i;
-	
+
 	if (size == 0)
-		return;
+		return ;
 	i = 0;
 	while (i < size - 1)
 	{

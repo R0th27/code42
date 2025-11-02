@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 03:04:44 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/02 19:20:55 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/02 21:54:28 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	ft_print_hex(unsigned long long num, int flag)
 		ft_putchar("0", 1);
 	if (num > 15)
 		ft_print_hex((num / 16), 0);
-	ft_putchar(&hex[num % 16], 1);	
+	ft_putchar(&hex[num % 16], 1);
 }
 
 static void	ft_print_addr(unsigned long long ptr)
@@ -40,7 +40,7 @@ static void	ft_print_addr(unsigned long long ptr)
 
 	tmp = ptr;
 	i = 0;
-	while (i  < 15)
+	while (i < 15)
 	{
 		if (tmp < 16)
 			ft_putchar("0", 1);
@@ -100,7 +100,8 @@ void	*ft_print_memory(void *addr, unsigned int size)
 /*
 int	main(void)
 {
-	char	str[] = "Bonjour les aminches\t\n\tc\a est fou\ttout\tce qu on peut faire avec\t\n\tprint_memory\n\n\n\tlol.lol\n ";
+	char	str[] = "Bonjour les aminches\t\n\tc\a est fou\ttout\tce qu on peut 
+					faire avec\t\n\tprint_memory\n\n\n\tlol.lol\n ";
 
 	ft_print_memory(str, sizeof(str));
 	//ft_putchar("\n", 1);

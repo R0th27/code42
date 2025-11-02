@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 20:10:02 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/01 21:16:06 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/02 21:54:41 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ char	*ft_strcapitalize(char *str)
 
 int	main(void)
 {
-	char str1[] = "salUt, coMMent tu vas ? 42mots quarante-deux; cinquante+et+un";
+	char str1[] = "salUt, coMMent tu vas ? 42mots quarante-deux; 
+					cinquante+et+un";
 	char str2[] = "HELLO WORLD";
 	char str3[] = "123abc DEF ghi";
 	char str4[] = "";

@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 20:26:20 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/04 21:32:09 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/05 20:40:07 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,60 @@ int	**ft_create_board(int btype)
 	return (board);
 }
 
+void	ft_easy_clues2(int ***board, int index, int btype, int step)
+{
+	int	fill;
+	int	constant;
+	int	variable;
+	int	flag;
+
+	flag = 2 * (index / (btype * 2));
+	constant = index % btype;
+	variable = ((index / btype) - flag) * (btype - 1);
+	fill = 1;
+	while (fill <= btype)
+	{
+		if (index < btype * 2)
+			(*board)[variable][constant] = fill;
+		else
+			(*board)[constant][variable] = fill;
+		variable += step;
+		fill++;
+	}
+}
+
+void	ft_easy_clue1(int ***board, int btype, int *clues)
+{
+	int	index;
+	int	step;
+	int	constant;
+	int	variable;
+	int	flag;
+
+	index = 0;
+	while (index < btype * btype)
+	{
+		flag = 2 * (index / (btype * 2));
+		constant = index % btype;
+		variable = ((index / btype) - flag) * (btype - 1);
+		step = (-2 * ((index / btype) - flag)) + 1;
+		if (clues[index] == 1)
+		{
+			if (index < btype * 2)
+				(*board)[variable][constant] = btype;
+			else
+				(*board)[constant][variable] = btype;
+		}
+		if (clues[index] == btype)
+			ft_easy_clues2(board, index, btype, step);
+		index++;
+	}
+}
+
 void	ft_initialize_board(int ***board, int btype, int *clues)
 {
 	int	row;
 	int	col;
-	int	i;
 
 	row = 0;
 	while (row < btype)
@@ -56,8 +105,7 @@ void	ft_initialize_board(int ***board, int btype, int *clues)
 			(*board)[row][col++] = 0;
 		row++;
 	}
-	i = 0;
-	while (i < btype * btype)
+	ft_easy_clue1(board, btype, clues);
 }
 
 void	ft_free_board(int ***board, int btype)

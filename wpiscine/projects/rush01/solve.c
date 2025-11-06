@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 20:37:56 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/06 23:30:07 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/06 23:45:38 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@ int	ft_match(int *clue, int *row_clue, int *col_clue, int flag);
 
 int	ft_clue_check(int **board, int btype, int *clues, int pos)
 {
-	int	coordinate[2];
+	int			coordinate[2];
 	static int	clue[4];
-	int	*row_clue;
-	int	*col_clue;
-	int	flag;
+	int			*row_clue;
+	int			*col_clue;
+	int			flag;
 
 	coordinate[0] = pos / btype;
 	coordinate[1] = pos % btype;
@@ -71,11 +71,11 @@ int	ft_solve_puzzle(int ***board, int btype, int *clues, int pos)
 		(*board)[row][col] = fill;
 		flag = ft_pos_check(*board, btype, row, col);
 		if ((pos % btype == btype - 1 || pos / btype == btype - 1) && flag == 1)
-				flag = ft_clue_check(*board, btype, clues, pos);
+			flag = ft_clue_check(*board, btype, clues, pos);
 		if (flag == 1)
 		{
 			if (ft_solve_puzzle(board, btype, clues, pos + 1))
-					return (1);
+				return (1);
 		}
 		(*board)[row][col] = 0;
 		fill++;

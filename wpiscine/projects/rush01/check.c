@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 20:57:02 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/06 23:29:41 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/06 23:44:53 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_match(int *clue, int *row_clue, int *col_clue, int flag)
 	}
 	else
 	{
-		if (clue[0] == row_clue[0] && clue[1] == row_clue[1] 
+		if (clue[0] == row_clue[0] && clue[1] == row_clue[1]
 			&& clue[2] == col_clue[0] && clue[3] == col_clue[1])
 			return (1);
 	}

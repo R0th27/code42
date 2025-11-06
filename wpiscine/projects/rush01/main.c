@@ -6,20 +6,19 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 01:17:11 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/05 20:43:56 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/06 23:35:34 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 
 void	ft_putchar(char *c, int size);
 int		**ft_create_board(int btype);
-void	ft_initialize_board(int ***board, int btype, int *clues);
+void	ft_initialize_board(int ***board, int btype);
 void	ft_print_board(int **board, int btype);
 void	ft_free_board(int ***board, int btype);
-int		ft_solve_puzzle(int ***board, int btype, int *clues);
+int		ft_solve_puzzle(int ***board, int btype, int *clues, int pos);
 
 int	ft_len_check(char *str)
 {
@@ -77,7 +76,7 @@ int	main(int argc, char **argv)
 	int	clues[36];
 	int	btype;
 	int	**board;
-	//int	solve;
+	int	solve;
 
 	if (argc != 2)
 	{
@@ -90,10 +89,12 @@ int	main(int argc, char **argv)
 	board = ft_create_board(btype);
 	if (!board)
 		return (1);
-	ft_initialize_board(&board, btype, clues);
-	solve = ft_solve_puzzle(&board, btype, clues);
-	//if (solve)
-	ft_print_board(board, btype);
+	ft_initialize_board(&board, btype);
+	solve = ft_solve_puzzle(&board, btype, clues, 0);
+	if (solve)
+		ft_print_board(board, btype);
+	else
+		ft_putchar("Error\n", 6);
 	ft_free_board(&board, btype);
 	return (0);
 }

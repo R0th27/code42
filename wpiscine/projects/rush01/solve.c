@@ -6,9 +6,11 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 20:37:56 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/06 23:45:38 by htoe             ###   ########.fr       */
+/*   Updated: 2025/11/09 19:30:58 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <unistd.h>
 
 int	*ft_visible_row(int **board, int btype, int row, int *flag);
 int	*ft_visible_col(int **board, int btype, int col, int *flag);
@@ -28,6 +30,8 @@ int	ft_clue_check(int **board, int btype, int *clues, int pos)
 	clue[1] = clues[coordinate[0] + (btype * 2) + btype];
 	clue[2] = clues[coordinate[1]];
 	clue[3] = clues[coordinate[1] + btype];
+	row_clue = NULL;
+	col_clue = NULL;
 	flag = 0;
 	if (coordinate[1] == btype - 1)
 		row_clue = ft_visible_row(board, btype, coordinate[0], &flag);

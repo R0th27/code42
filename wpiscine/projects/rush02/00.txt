@@ -1,0 +1,19 @@
+1 arg -> number to convert
+2 arg -> new dict, number to convert
+
+!arg -> Error\n
+
+number -> unsigned int
+
+##dict rules
+number spaces : spaces chars\n
+empty lines
+
+##Error
+parsing Error
+dict file error 
+
+use the - , and to correct written syntax
+
+3rd arg -> - stdin 
+

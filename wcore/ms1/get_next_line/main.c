@@ -1,23 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/27 21:18:33 by htoe              #+#    #+#             */
-/*   Updated: 2025/11/27 21:21:04 by htoe             ###   ########.fr       */
+/*   Created: 2025/11/26 16:54:50 by htoe              #+#    #+#             */
+/*   Updated: 2025/11/27 21:18:08 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
-char	*get_next_line(int fd)
+int	main(int argc, char **argv)
 {
-	static char	*cache;
-	char		*line;
+	char	*str;
+	int		fd1;
+	int		i;
 
-	if (fd == -1 || BUFFER_SIZE <= 0)
-		return (NULL);
-	
+	if (argc != 2)
+		printf("Provide a file\n");
+	fd1 = open(argv[1], O_RDONLY);
+	i = 0;
+	while (i++ < 8)
+	{
+		str = get_next_line(fd1);
+		printf("%d: %s\n", i, str);
+		//if (str)
+		//	free(str);
+	}
+	return (0);
 }

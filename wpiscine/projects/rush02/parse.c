@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 21:30:17 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/03 01:52:41 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/03 22:31:58 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,79 @@ int	fetch_line(int fd, char **line)
 	return (1);
 }
 
+int	extract_index(char *line, int **index)
+{
+	int	i;
+	int	len;
+
+	*index = (int *)malloc(sizeof(int) * 3);
+	if (!*index)
+		return (0);
+	len = 0;
+	while (line[len])
+		len++;
+	i = 0;
+	while (line[i] && line[i] != ' ' && line[i] != ':')
+		i++;
+	(*index)[0] = i;
+	while (line[i] && line[i] == ' ' && line[i] != ':')
+		i++;
+	while (line[i] && line[i] != ' ')
+		i++;
+	(*index)[1] = ++i;
+	(*index)[2] = len - i;
+	if ((*index)[0] == len || (*index)[1] == len || (*index)[2] == len)
+	{
+		free(*index);
+		return(0);
+	}
+	return (1);
+}
+
+int	parse_line(char **key, char **value, char *line)
+{
+	int	*index;
+	int	format;
+	int	i;
+
+	index = NULL;
+	format = extract_index(line, &index);
+	if (!format)
+		return (0);
+	*key = (char *)malloc(sizeof(char) * (index[0] + 1));
+	*value = (char *)malloc(sizeof(char) * (index[2] + 1));
+	i = -1;
+	while (++i < index[0])
+		(*key)[i] = line[i];
+	(*key)[i] = '\0';
+	i = 0;
+	while (i < index[2] && line[index[1]])
+		(*value)[i++] = line[index[1]++];
+	(*value)[i] = '\0';
+	if (index)
+		free(index);
+	return (1);
+}
+
 t_list	*add_node(char *line)
 {
 	t_list	*node;
+	char	*key;
+	char	*value;
+	int		parse;
 
 	if (!line)
+		return (NULL);
+	key = NULL;
+	value = NULL;
+	parse = parse_line(&key, &value, line);
+	if (!parse)
 		return (NULL);
 	node = (t_list *)malloc(sizeof(t_list));
 	if (!node)
 		return (NULL);
-	node -> key = ft_strdup(line);
+	node -> key = key;
+	node -> value = value;
 	node -> next = NULL;
 	return (node);
 }
@@ -67,11 +130,14 @@ t_list	*dict_parse(int fd)
 	result = fetch_line(fd, &line);
 	if (!result)
 		return (NULL);
-	head = add_node(line);
+	node = add_node(line);
+	head = node;
 	current = head;
 	while (result)
 	{
 		free(line);
+		if (!node)
+			return (NULL);
 		result = fetch_line(fd, &line);
 		node = add_node(line);
 		current -> next = node;

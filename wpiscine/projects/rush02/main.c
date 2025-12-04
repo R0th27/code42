@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 19:47:08 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/03 22:25:08 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/05 06:10:28 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ int	main(int argc, char **argv)
 		close(fd);
 		return (1);
 	}
-	entries = dict_parse(fd);
+	entries = NULL;
+	if (!dict_parse(fd, &entries))
+		return (1);
 	if (type == 2)
 		printf("still implementing for stdin\n");
 	else

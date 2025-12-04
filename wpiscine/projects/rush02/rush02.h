@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 21:07:21 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/03 01:55:33 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/05 05:56:05 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int		type_check(int argc, char **argv, char **input);
 int		input_check(char *str);
 
 //dict file
-t_list	*dict_parse(int fd);
+int		dict_parse(int fd, t_list **head);
 int		fetch_line(int fd, char **line);
 
 //linked-list

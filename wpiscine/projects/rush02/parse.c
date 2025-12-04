@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 21:30:17 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/03 22:31:58 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/05 06:07:04 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,10 @@ int	extract_index(char *line, int **index)
 		i++;
 	(*index)[1] = ++i;
 	(*index)[2] = len - i;
-	if ((*index)[0] == len || (*index)[1] == len || (*index)[2] == len)
+	if ((*index)[0] >= len || (*index)[1] == len + 1 || (*index)[2] < 1)
 	{
 		free(*index);
-		return(0);
+		return (0);
 	}
 	return (1);
 }
@@ -118,9 +118,8 @@ t_list	*add_node(char *line)
 	return (node);
 }
 
-t_list	*dict_parse(int fd)
+int	dict_parse(int fd, t_list **head)
 {
-	t_list	*head;
 	t_list	*node;
 	t_list	*current;
 	char	*line;
@@ -128,20 +127,21 @@ t_list	*dict_parse(int fd)
 
 	line = NULL;
 	result = fetch_line(fd, &line);
-	if (!result)
-		return (NULL);
 	node = add_node(line);
-	head = node;
-	current = head;
+	*head = node;
+	current = *head;
 	while (result)
 	{
 		free(line);
-		if (!node)
-			return (NULL);
+		if (!node || !*head)
+		{
+			ft_putstr("Dict Error\n");
+			return (0);
+		}
 		result = fetch_line(fd, &line);
 		node = add_node(line);
 		current -> next = node;
 		current = node;
 	}
-	return (head);
+	return (1);
 }

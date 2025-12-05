@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 19:47:08 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/05 06:10:28 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/05 06:24:57 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,8 @@ int	main(int argc, char **argv)
 	entries = NULL;
 	if (!dict_parse(fd, &entries))
 		return (1);
-	if (type == 2)
-		printf("still implementing for stdin\n");
-	else
-		printf("still implementing to solve\n");
-	show_list(entries);
+	if (!process(input, entries, type))
+		return (1);
 	free_list(entries);
 	close(fd);
 	return (0);

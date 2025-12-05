@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 21:07:21 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/05 05:56:05 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/05 09:16:24 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	ft_putchar(char c);
 void	ft_putstr(char *str);
 char	*ft_realloc(char *line, int *old, int new);
 char	*ft_strdup(char *str);
+char	*suffix_initializer(int suffix);
 
 //checking
 int		file_check(int argc, char **argv);
@@ -44,5 +45,12 @@ int		fetch_line(int fd, char **line);
 t_list	*add_node(char *line);
 void	free_list(t_list *head);
 void	show_list(t_list *head);
+
+//search and queries
+int		process(char *input, t_list *entries, int type);
+int		search_and_query(char *input, t_list *entries, int len);
+int		search_placement(char number, int suffix, t_list *entries);
+char	*search_suffix(int suffix, t_list *entries);
+int		search_tens(char tens, char units, t_list *entries);
 
 #endif

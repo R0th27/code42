@@ -6,7 +6,7 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 21:30:17 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/05 06:07:04 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/05 08:06:00 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	extract_index(char *line, int **index)
 		i++;
 	(*index)[1] = ++i;
 	(*index)[2] = len - i;
-	if ((*index)[0] >= len || (*index)[1] == len + 1 || (*index)[2] < 1)
+	if ((*index)[0] == 0 || (*index)[1] == len + 1 || (*index)[2] < 1)
 	{
 		free(*index);
 		return (0);

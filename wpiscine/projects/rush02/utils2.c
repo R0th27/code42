@@ -6,11 +6,27 @@
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/03 01:52:55 by htoe              #+#    #+#             */
-/*   Updated: 2025/12/03 22:26:43 by htoe             ###   ########.fr       */
+/*   Updated: 2025/12/05 09:06:25 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rush02.h"
+
+char	*suffix_initializer(int suffix)
+{
+	char	*sample;
+	int		i;
+
+	sample = (char *)malloc(sizeof(char) * (suffix + 2));
+	if (!sample)
+		return (NULL);
+	i = 0;
+	sample[i++] = '1';
+	while (i < suffix + 1)
+		sample[i++] = '0';
+	sample[i] = '\0';
+	return (sample);
+}
 
 void	show_list(t_list *head)
 {

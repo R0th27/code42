@@ -12,6 +12,6 @@
 
 ## A prefer service
 
-**excluding `NGINX` , `Apache2`
+**excluding `NGINX` , `Apache2`**
 
 we can open more ports to suit your needs by chaning UFW

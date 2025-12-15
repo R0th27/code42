@@ -4,127 +4,221 @@
 
 ## Description
 
-This function is a simple prototype of original **printf** function from **stdio header**. The original printf function can print out the following things to stdout or terminal. 
+`ft_printf` is a simplified reimplementation of the standard C `printf` function from the `<stdio.h>` library.
 
-1. a character
-2. a string
-3. a memory address
-4. a decimal integer in base 10
-5. an unsigned integer in base 10
-6. an unsigned integer in base 16
+This project reproduces the core behavior of `printf`: formatted output to standard output and returning the exact number of printed characters. Only a restricted set of format specifiers is supported, as defined by the project requirements.
 
-And the return value of the printf function is the number of characters it printed out to the stdout. 
+The implementation prioritizes correctness, explicit edge-case handling, and deterministic behavior.
 
-Although printf can print out more data types, this prototyped function is implemented in order to perform the simple operations mentioned above.
+---
 
-## Instructions
+## Supported Conversions
 
-This prototyped function can be compiled with the included Makefile to get **an archived library file** for further uses. 
+The following format specifiers are supported:
 
+- `%c` — character  
+- `%s` — string  
+- `%p` — pointer address  
+- `%d`, `%i` — signed decimal integer (base 10)  
+- `%u` — unsigned decimal integer (base 10)  
+- `%x` — hexadecimal (lowercase)  
+- `%X` — hexadecimal (uppercase)  
+- `%%` — literal `%`
+
+The function returns the total number of characters written to standard output.
+
+---
+
+## Compilation
+
+The project is compiled as a static library using the provided `Makefile`.
+
+```bash
+make			#generate libftprintf.a
+
+make fclean		#remove all files
+
+make clean		#remove .o files
+
+make re			#recompilation
+```
+
+## Project Structure
+
+```
+.
+├── Makefile
+├── ft_printf.h
+├── ft_printf.c
+└── ft_printf_utils.c
+```
+
+## Usage Example
+
+```c
+ft_printf("Char: %c\n", 'A');			//Char: A
+ft_printf("String: %s\n", NULL);		//String: (null)
+ft_printf("Pointer: %p\n", NULL);		//Pointer: (nil)
+ft_printf("Signed: %d\n", -42);			//Signed: -42
+ft_printf("Unsigned: %u\n", -42);		//Unsigned: 4294967254
+ft_printf("Hex: %x %X\n", 255, 255);	//Hex: ff FF
+```
+
+>Note: Negative values passed to `%u` are interpreted as unsigned integers.
+
+## Edge Case Handling
+
+- `%s`
+
+	* If the string is `NULL`, `(null)` is printed
+
+- `%p`
+
+	* If the pointer is `NULL`, `(nil)` is printed
+
+- `%d`, `%i`
+
+	* Correct handling of negative values and `INT_MIN`
+
+- `%u`, `%x`, `%X`
+
+	* Treated as unsigned int values
+
+- `%%`
+
+	* Prints a literal `%` character
+
+## Return Value Management
+
+The return value is tracked using **a static counter** that increments every time a character is written.
+
+```c
+int	ft_count(int flag)
+{
+	static int	count = 0;
+
+	if (flag == 0)
+		count++;
+	else
+		count = 0;
+	return (count);
+}
+```
+
+Each call to `ft_printf_putchar` updates the counter:
+
+```c
+void	ft_printf_putchar(char c)
+{
+	write(1, &c, 1);
+	ft_count(0);
+}
+```
+
+* The counter persists across function calls
+
+* The counter is reset explicitly at the end of ft_printf
+
+* This guarantees an accurate character count without buffering
+
+## Internal Dispatch Logic
+
+Format specifiers are handled through a dedicated dispatcher:
+
+```c
+void	flag_check(va_list args, char c);
+```
+Each specifier maps to a single, well-defined helper function.
+Unsupported specifiers are ignored.
+
+## Number Conversion Strategy
+
+All numeric conversions are implemented iteratively, not recursively.
+
+This ensures:
+
+- Predictable stack usage
+
+- Fixed memory bounds
+
+- No recursive call overhead
+
+### Pointer Conversion (`%p`)
+
+```c
+int	temp[16];
+```
+
+- Uses `unsigned long long` to store the address
+
+- Maximum of 16 hexadecimal digits
+
+- Printed with `0x` prefix
+
+- `(nil)` is printed if the pointer is `NULL`
+
+### Decimal Integer Conversion (`%d`, `%i`, `%u`)
+
+```c
+int	temp[10];
+```
+
+- Handles signed and unsigned integers via a flag
+
+- Internally uses `long` to safely process `INT_MIN`
+
+- Maximum of 10 digits required for 32-bit integers
+
+### Hexadecimal Conversion (`%x`, `%X`)
+
+```c
+int	temp[8];
+```
+
+- Handles 32-bit unsigned integers
+
+- Supports lowercase and uppercase output
+
+- Maximum of 8 hexadecimal digits
+
+## Design Choices
+
+### Flag-Based Function Reuse
+
+Flags are used to avoid duplicated logic:
+
+- Signed vs unsigned integer output
+
+- Lowercase vs uppercase hexadecimal output
+
+This keeps the codebase compact and consistent.
+
+### No Output Buffering
+
+Unlike the original `printf`, this implementation does not use an internal buffer.
+
+- Each character is written immediately using `write()`
+
+- Simplifies control flow and debugging
+
+- Prioritizes correctness over performance
+
+## Limitations
+
+- No support for flags (`+`, `-`, `0`, `#`)
+
+- No width or precision handling
+
+- No floating-point conversions
+
+- No locale-specific formatting
+
+Only the listed conversions are supported.
 
 ## Resources
 
-1. [**Variadic Functions in C** by Geek for Geek](https://www.geeksforgeeks.org/c/variadic-functions-in-c/)
+- [Variadic Functions in C — GeeksforGeeks](https://www.geeksforgeeks.org/c/variadic-functions-in-c/)
 
-	* **Variadic function from stdarg header** can accept the unknown number of argumentss into the function while storing their values with **va_start** to a list called **va_list** which you can access later with **va_arg**.
+- [Printf Format Specification — Wikipedia](https://en.wikipedia.org/wiki/Printf)
 
-2. [**Data Types and Thier Values** by MBED](https://os.mbed.com/handbook/C-Data-Types)
-
-	* An integer is stored in 4 Byte of memory. The stored value can be changed to signed or unsigned. 
-	
-		**Signed integer** use the **first bit as flag for positive or negative** 
-	
-		**Unsigned integer** can **utilize all 32 bits of memory**
-		
-		**The value of minimum and maximum** differed according to their nature.
-
-3. [**Memory Allocation in C** by w3schools](https://www.w3schools.com/c/c_memory_allocate.php)
-
-	* Memory allocation happens whenever we run a program. 
-
-	* **Static memory** is reserved and assigned by compiler during compilation time for variables. 
-
-	* **Dynamic memory** is manually assigned by a programmer before compiling and running. Also, it must be freed manually to avoid memory leak and dangling pointers. 
-
-4. [**printf Type field** from Wikipedia](https://en.wikipedia.org/wiki/Printf)
-
-	* Every printf specifier expect a certain data type for input and return a number of printed out characters as an integer. 
-
-5. [**Static Variable** by codeAcademy](https://www.codecademy.com/resources/docs/c/static-variables)
-
-	* **Static variable** are something present throughout the entire program. The lifetime of a local variable within a function scope is during the function runtime. But static variable is something that is persistent during different function calls. 
-
-## Usage Examples
-
-In a normal string, the % sign become the flag and the character after the flag become the specifier.
-
-* example: This is a `%c`
-
-1. `%c` can print out a single charater
-
-2. `%s` can print out a string if present
-
-	* if the string is NULL, it will print out (null)
-
-3. `%p` can print out a memory address of a pointer which is typically 6 Byte long with 12 Hex characters after the prefix **0x**.
-
-	* if the pointer is NULL, it will print out (nil)
-
-4. `%d` `%i` can print out a signed decimal integer which is 4 byte long.
-
-	* **Maximum Value** : 2147483647;
-	
-	* **Minimum Value** : -2147483648;
-
-5. `%u` can print out an unsigned decimal integer which is 4 byte long
-
-	* **Maximum Value** : 4294967295;
-	
-	* **Minimum Value** : 0;
-
-6. `%x` `%X` can print out an unsigned integer which is 4 bytes long with a 8 hex characters.
-
-	* **Maximum Value** : FFFFFFFF;
-	
-	* **Minimum Value** : 00000000;
-
-7. `%%` can print out a single **%** character to avoid confusing the flag with an actual character `%`
-
-
-## Technical Choices
-
-
-1. **The usage of flags to avoid duplicated occurences of similar functions**
-
-	The flags are used in 
-
-	* ft_printf_putnbr to differentiate between **signed int with flag 1** or **unsigned int with flag 0**
-
-	* ft_printf_puthex to differentiate between
-	**lowercase hexadecimal with flag 0** or **uppercase hexadecimal with flag 1**
-
-2. **Integer conversion methods**
-
-	For now, there are two methods I learnt which are
-
-	1. Conversion inside a while loop of a single function
-
-		* **pros** : one functional call on stack memory and the task can be done.
-
-		* **cons** : the static memory allocated during the implementation to store the computed integers must be enough.
-
-		* **usage** : when the number of loop is certain and the amount of output can be determined.
-
-	2. Conversion with a recursive function
-
-		* **pros** : the functions can be called for any amount of times until the task is done.
-
-		* **cons** : multiple calls for a same function can consume memory as everytime a function is called, it needs to be loaded into a stack memory.
-
-		* **usage** : when the number of loop is uncertain and the base cases can be defined exactly.
-
-3. **Performance vs Simplicity**
-
-	In the original **printf**, there is a buffer which store the characters to print out before actually calling the `write()` to reduce the amount of system function calling time to improve the performance.
-
-	In the implemented **ft_printf**, there is no buffer management and everytime a character is printed out, the `write()` is called.
+- [C Data Types and Limits — MBED](https://os.mbed.com/handbook/C-Data-Types)

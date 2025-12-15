@@ -1,128 +1,178 @@
 *This project has been created as part of the 42 curriculum by htoe.*
 
-# Get_Next_Line
+# get_next_line
 
 ## Description
 
-A “Description” section that clearly presents the project, including its goal and a brief overview.
+`get_next_line` is a function that reads from a file descriptor and returns a single line each time it is called.
 
-Using the system function `read()` from **unistd header**, we can obtain the content from a valid and readable file. The content may include multiple lines divided with a newline character `\n` or none at all except a single line ended at `EOF`. This function is to get a single line up to `EOF` or `\n` from a file for every time this function is called until we close our file descriptor for that file. 
+A line is defined as a sequence of characters ending with a newline character (`\n`) or the end of file (`EOF`).  
+The function maintains internal state between calls using a static cache variable, allowing partially read data to be preserved and reused correctly.
 
-## Instructions
+Only the mandatory (single file descriptor) version is implemented.
 
-Open a file with a `OPEN()` function from **fcntl header** and capture the return file descriptor id with an int. And then we can use that int with a get_next_line() function to get a line or NULL if there are no more content left or the file is invalid or empty. 
+---
 
-## Resources
-
-1. [**Input Output System Calls** by geeks for geek](https://www.geeksforgeeks.org/c/input-output-system-calls-c-create-open-close-read-write/
-)
-
-	* **OPEN(file, mode)** is a system function that can open a file with a name in string format and the mode can be selected according to the intention. The return value is a valid file descriptor in int type and -1 upon failure due to file does not exist or the file is out of permission.
-
-	* **File Descriptor** is an int type that is assigned to a file which is opened before closing and the default **FD** are **0 for stdin**, **1 for stdout** and **2 for stderr**.
-
-	* **read(fd, buffer, buffer_size)** is a function that can copy a content from a file up to buffer_size into a buffer which is a valid pointer with enough space for buffer_size. The return value is the read bytes from a file and **0 if the end of file `EOF`** is reached or **-1 if the file is modified or moved** before completing the operation. Read function works with offset which persists until file is closed so there is no backtracing if we don't store the content from a buffer before calling it again.
-
-	* **close(fd)** is a system function to remove the assigned value of file descriptor for a file after completing the operation.
-
-2. [**Static Variables** by codeAcademy](https://www.codecademy.com/resources/docs/c/static-variables)
-
-	* **A static variable** is a variable that can store values which will not be clear until we manually remove it in the program throughout the running time.
-
-## Usage Examples
-
-### Brief Operation Steps
-
-The get_next_line function will check for validity of `FD` and `BUFFER_SIZE` first. If there is some left over value in static char named cache, that value will be added into our first node of a linked list. 
-
-**The linked list** includes the pointer to store the read line from a buffer or remaining cache, an int len to store the string length it contains and the pointer to next line. 
-
-If there is no cache or newline character is not found in cache, the function will read the file with **a constant BUFFER_SIZE** set during compilation time until it reaches to a newline or EOF. Everytime we read with BUFFER_SIZE, the copied content will be added to a new node.
-
-Even after that, if the list is empty, we will return **NULL**. If not, we will extract the line from the linked list. That malloced line will be return later.
-
-Before returning the line, the cache will be updated if there are characters after the newline character `\n` or free it if no newline is found in the last node which means the `EOF` has reached. Another important thing to do is to free the linked list to prevent memory leak.
-
-## Explanation For Functions
+## Function Prototype
 
 ```c
 char	*get_next_line(int fd);
 ```
 
->check **the input fd, BUFFER_SIZE** and create the value which can be line created with malloc of NULL
+## Behavior
 
-```c
-void	add_node(char *line, t_node **head);
+- Reads from the given file descriptor
+
+- Returns **one line per function call**
+
+- Includes the newline character (`\n`) if present
+
+- Stops reading at `\n` or `EOF`
+
+- Returns `NULL` when there is nothing left to read or on error
+
+## Compilation
+
+The project can be compiled together with the required source files.
+
+```bash
+cc -Wall -Wextra -Werror main.c get_next_line.c get_next_line_utils.c
 ```
 
->create a node with a input string line while storing the len of that string and append to a created linked list
+or
 
-```c
-void	parse_file(int fd, t_node **list);
-```
->read through the file of a fd with a constant buffer size into a temporary buffer and **add a node** for every read buffer creating a list until the buffer include a newline character
-
-```c
-size_t	line_length(t_node *list);
+```bash
+cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 \
+	main.c get_next_line.c get_next_line_utils.c
 ```
 
->process through the created linked list to acquire the len of the line until the last node. If there is no newline character in last node the len of last node is added to return. If there is a newline character in last node, **the index got from the following formula** is returned.
+## Project Structure
 
->***index = address of newline - address of line's start***
-
-```c
-char	*update_cache(char *cache, t_node *list);
+```
+.
+├── get_next_line.c
+├── get_next_line_utils.c
+└── get_next_line.h
 ```
 
->acquire the last node with a **ft_lstlast** function and if there is no newline character the cache is free and return. If there is a newline the index is calculated like the line_length and the difference between total len and index is allocated memory and copied and returned.
+## Usage Example
 
 ```c
-char	*extract_line(t_node *list);
+int		fd;
+char	*line;
+
+fd = open("file.txt", O_RDONLY);
+while ((line = get_next_line(fd)))
+{
+	printf("%s", line);
+	free(line);
+}
+close(fd);
 ```
 
->using the length acquired from line_length function, a string is allocated memory and copied from every strings of the linked list and returned.
+## Edge Case Handling
 
-```c
-size_t	ft_strlen(char *str);
-```
+- Invalid file descriptor → returns `NULL`
 
->calculate the length of incoming string up to the null terminator and the value is returned. 
+- Read error → returns `NULL`
 
-```c
-char	*ft_strchr(const char *s, int c);
-```
+- Empty file → returns `NULL`
 
->find the first occurence of char `c` in a string `s`. The memory address of the occurence is returned if found. If not found or the incoming string is empty, **NULL** is returned.
+- File without a trailing newline → returns the last line without `\n`
 
-```c
-void	free_list(t_node **list);
-```
+- Newline at buffer boundary → handled correctly
 
->loop through the list while freeing the line created with malloc and node created with malloc. the head of the list is set to **NULL** to avoid **dangling pointer** after freeing all the nodes.
+## Internal Design
 
-```c
-t_node	*ft_lstlast(t_node *head);
-```
+### Persistent Cache
 
->loop through the list until **the next node is NULL** which indicates the current node is last node. The memory address of the last node is returned. The return value is the incoming memory address if the list is **NULL**.
+Unread data is stored in a static cache between function calls.
 
-## Technical Choices
+This allows the function to continue reading exactly where it stopped previously.
 
-There were two ways I implemented the get_next_line functions. In case the file is too large and there may be newline at the end of file or no newline at all. The buffer has to read according to the set BUFFER_SIZE so if the file is $512$ KB and BUFFER_SIZE is just $4$ B, the file must be read $128000$ times.
+### Linked List Buffering
 
-1. Using the strjoin while reading the file
+- Data read from the file descriptor is stored in a linked list of nodes:
 
-	There is no linked list. The static cache is passed to function implemented to read the file. Every buffer call is saved to the cache with strjoin. 
-	To complete the $128000$ times of reading, the first buffer must be passed and copied into ft_strjoin for $128000$ times. The last buffer must be copied one time. If we sum all the copied value become $$\frac{(128000 * 128001)} 2 $$ which is $8192064000$ B or $8192064$ KB.
-	
-	* **pros**: simple way to implement the function
-	
-	* **cons**: the time complexity becomes $O(n^2$) if the newline is at the end of a big file. 
+- Each node stores a chunk read from `read()`
 
-2. Using the linked list while reading the file
+- Avoids unnecessary memory reallocations
 
-	The linked list store all the read buffer within separated nodes. All the buffer for $128000$ times is stored in $128000$ nodes copying $512000$ B. After that all the lines is copied into an enough sized line copying all $512000$ B. The total copied byte become 1024000B or $1024$ KB.
+- Allows efficient line assembly without repeated string concatenation
 
-	* **pros** the time complexity becomes $O(n$) even if the newline is at the end of a big file.
 
-	* **cons** creating 128000 nodes consume memory for node overhead and the usage for memory address become $128000+$. 
+### Line Extraction Strategy
+
+The implementation follows these steps:
+
+1. Read data until **a newline** or **EOF** is encountered
+
+2. Store read chunks in a linked list
+
+3. Calculate the exact length of the next line
+
+4. Allocate memory for the line
+
+5. Copy characters up to and including `\n`
+
+6. Update the cache to keep remaining data
+
+This guarantees:
+
+- Exact memory allocation
+
+- No data loss
+
+- No extra reads
+
+## Design Choices
+
+### Iterative Processing
+
+All operations are implemented iteratively:
+
+- No recursion
+
+- Predictable memory usage
+
+- Clear execution flow
+
+### Minimal Memory Allocation
+
+- Memory is allocated only when required
+
+- Unused nodes are freed immediately
+
+- Cache is updated only when unread data remains
+
+### Separation of Responsibilities
+
+Each helper function has a single responsibility:
+
+- Reading data
+
+- Storing chunks
+
+- Extracting a line
+
+- Updating the cache
+
+- Freeing resources
+
+## Notes
+
+- The caller is responsible for freeing the returned string
+
+- BUFFER_SIZE can be defined at compile time.
+If not defined, **a default value of 3** is used.
+
+- Bonus version supports multiple file descriptors (up to 1024)
+
+
+## Resources
+
+[Linux Manual Pages - read(2)](https://linux.die.net/man/2/read)
+
+[Linked Lists - learn-c.org](https://www.learn-c.org/en/Linked_lists)
+
+[cppreference](https://en.cppreference.com/w/c/language/static_storage_duration.html)

@@ -2,7 +2,7 @@
 
 ## monitoring.sh
 
-At the server startup, the script will display some information on all terminals and every 10 minutes (wall)
+At the server startup, the script will display some information on all terminals and every 10 minutes (wall)(crontab)
 
 1. Architecture of the operating system + kernel version
 
@@ -67,3 +67,55 @@ Broadcast message from root@wil (tty1) (Sun Apr 25 15:45:00 2021):
 
 #Sudo : 42 cmd
 ```
+
+## Notes
+
+### broadcasting
+
+**wall** or **write all** in the script can broadcast the message into all logged-in TTYs, local terminal, SSH sessions, pts/* consoles
+
+`which wall`
+
+**session check**
+
+`who`
+
+`tty`
+
+```bash
+#!/bin/bash
+
+wall << EOF
+Hello
+EOF
+```
+
+`sudo chmod +x /usr/local/bin/hi.sh`
+
+### crontab
+
+1. crontab is enable for startup
+
+`sudo crontab -e`
+
+`sudo crontab -u others -e`
+
+`*/10 * * * * /usr/local/bin/hi.sh`
+
+`sudo crontab -l`
+
+### interupting it
+
+`sudo systemctl stop cron`
+
+### command
+
+**check command.md**
+
+### signature file
+
+1. go to vdi location
+
+2. run `shasum vm.vdi`
+
+3. voila

@@ -34,24 +34,88 @@ In addition to the root user, a user with your <login> has to be present
 
 This user has to belong to the user42 and sudo groups.
 
-## Questions so far
+## Notes
 
-1. how to set up sudo 
+### sudo setup
 
-2. how to limit attempt and how to display custom message
+`apt install sudo`
 
-3. how to log sudo inputs and outputs
+### add user
 
-5. what is TTY mode
+`sudo adduser <new>`
 
-6. How to enable it
+`sudo useradd -m <new>`
 
-7. How to restrict sudo to certain paths
+`sudo passwd <new>`
 
-8. Why is it important to protect bin and sbin
+`sudo deluser username`
 
-9. how to create a user
+`rm -Rf /home/username`
 
-10. how to create user group
+`users`
 
-11. how to set a user to a certain group
+`getent passwd username`
+
+`id username` **user exist + primary group**
+
+### add group
+
+`sudo addgroup <new>`
+
+`getent group <new>`
+
+`cut -d: -f1 /etc/group`
+
+### manage user with group
+
+`sudo adduser user group`
+
+`sudo usermod -aG group user`
+
+`groups user`
+
+`sudo deluser name group`
+
+`sudo groupdel group`
+
+### sudo policy
+
+`mkdir /var/log/sudo`
+
+`chmod 700 /var/log/sudo`
+
+`sudo visudo`
+
+```
+Defaults passwd_tries=3
+Defaults badpass_message="wrong"
+Defaults log_input
+Defaults log_output
+Defaults iolog_dir="/var/log/sudo"
+Defaults requiretty
+Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+Defaults logfile="/var/log/sudo/sudo_config"
+```
+
+**iolog is details**
+**logfile is who what when**
+
+### additional
+
+```
+r = 4, w = 2, x = 1
+764 => rwxrw-r--
+user -> 7 => 4(r) + 2(w) + 1(x)
+group -> 6 => 4(r) + 2(w)
+others -> 4 => 4(r)
+```
+
+`chmod u=rwx,g=rx,o= file`
+
+`sudo chown user file`
+
+`sudo chown -R user folder`
+
+`sudo chgrp group file`
+
+`sudo chgrp -R group folder`

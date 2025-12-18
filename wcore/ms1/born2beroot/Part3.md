@@ -34,7 +34,25 @@ It will be modified later
 
 `hostname`
 
-`hostname -b <new>` **to modify hostname**
+**to modify hostname during runtime**
+
+`hostname -b <new>` 
+
+**to modify persistent hostname**
+
+`sudo nano /etc/hostname`
+
+`sudo nano /etc/hosts`
+
+`or`
+
+`sudo hostnamectl set-hostname new`
+
+>127.0.0.1 localhost RFC convention
+
+>127.0.1.1 hostname if no dhcp or static config
+
+>169.254.0.0/16 in APIPA of MS
 
 ### password services
 
@@ -104,6 +122,7 @@ to verify `chage -l user`
 
 ```
 password requisite pam_pwquality.so \
+retry=3 \
 minlen=10 \
 ucredit=-1 \
 lcredit=-1 \

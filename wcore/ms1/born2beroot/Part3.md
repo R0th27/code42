@@ -28,14 +28,97 @@ It will be modified later
 
 5. excluding root: must have at least 7 characters differenced from the former password.
 
-## Questions so far
+## Notes
 
-1. How to setup a hostname
+### hostname check and modify
 
-2. What does it use for
+`hostname`
 
-3. How to modify the hostname
+`hostname -b <new>` **to modify hostname**
 
-4. How to set a password policies
+### password services
 
-5. How to exclue the root
+**PAM stack**
+
+1. auth - who are you?
+
+	* **pam_unix.so**
+
+2. account - are you allowed here? password definitions?
+
+	* **pam_unix.so** 
+
+	* **/etc/shadow**
+
+3. password - if pw change, allow?
+
+	* **pam_pwquality.so**
+
+4. session - home/ mount/ logging
+
+	* **pam_limits.so**
+
+
+**check for pam_unix.so**
+
+`cat /etc/pam.d/common-account`
+
+**account pam_unix.so is critical**
+
+**PAM requisite vs required**
+
+1. requisite quit immediately showing error
+
+2. required still continue to other process resulting confusing error
+
+### basic password age
+
+`nano /etc/login.defs` 
+
+```
+PASS_MAX_DAYS 30
+PASS_MIN_DAYS 2
+PASS_WARN_AGE 7
+```
+
+to verify `chage -l user`
+
+#### Important about login.defs
+
+1. pam_unix.so read from /etc/shadow which will not be updated even after changing login.defs
+
+2. so if you have pre exist users, you should manually enforce password aging to users
+
+`chage -l user`
+
+`chage -M 30 -m 2 -W 7 user`
+
+
+### password quality enforce
+
+`apt install libpam-pwquality`
+
+`ls /lib/x86_64-linux-gnu/security/pam_pwquality.so`
+
+`sudo nano /etc/pam.d/common-password`
+
+```
+password requisite pam_pwquality.so \
+minlen=10 \
+ucredit=-1 \
+lcredit=-1 \
+dcredit=-1 \
+maxrepeat=3 \
+usercheck=1 \
+difof=7 \
+```
+
+`enforce_for_root` is excluded according to born2beroot
+
+**all rules are appied to root except difof** **rules of PAM**
+
+`chage -l root`
+
+`grep pam_pwquality /etc/pam.d/common-password/`
+
+

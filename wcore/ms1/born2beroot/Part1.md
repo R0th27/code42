@@ -201,15 +201,11 @@ systemctl list-timers
 
 `lsblk` **disk partitions**
 
-`blkid` **root disk UID**
-
 `cat /etc/fstab` **disk UID verify**
 
 `df -hT` **disk free**
 
 `free -h` **ram free**
-
-`swapon --show` **swap verify**
 
 ### architectural 
 
@@ -222,8 +218,6 @@ systemctl list-timers
 ### hostname
 
 `hostname` **to check hostname**
-
-`hostname -b <newname>` **to change hostname**
 
 ### connectivity
 

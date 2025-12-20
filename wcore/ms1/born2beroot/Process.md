@@ -374,13 +374,137 @@ var/log is 4G
 
 	4. `*/10 * * * * /usr/local/bin/hi.sh`
 
-## Worpress Lighttpd MariaDB PHP FTP
+## Lighttpd Wordpress MariaDB PHP FTP
 
 ### 1. To do
 
+1. Install lighttpd and fix firewall
 
+2. Install Wordpress latest zip in /var/WWW/
+
+3. Install mariaDB and run mysql_secure_installation
+
+4. Install php and php_mysql
+
+5. Setup Wordpress
+
+6. Install ftp and update firewall
 
 ### 2. Commands
 
+1. lighttpd
 
+	1. `apt install lighttpd`
 
+	2. `ufw allow 80/tcp && ufw allow 443/tcp`
+
+	3. `ss -tnlp | grep 80 (or) 443`
+
+2. wordpress
+
+	1. `apt install wget zip`
+
+	2. `cd /var/WWW`
+
+	3. `wget https://wordpress.org/latest.zip`
+
+	4. `sudo unzip latest.zip`
+
+	5. `sudo mv html/ html/old/`
+
+	6. `sudo mv wordpress html`
+
+	7. `sudo chmod -R 755 html`
+
+3. mariaDB
+
+	1. `run mysql_secure_installation`
+	```	
+	Switch to unix_socket autentication? → N 
+	Change the root password? → N
+	Remove anonymous users? → Y 
+	Disallow root login remotely? → Y 
+	Remove test database and access to it? → Y 
+	Reload privilege tables now? → Y
+	```
+
+	2. `mariadb`
+
+		`CREATE DATABASE wp_database;`
+
+		`SHOW DATABASES;`
+
+		`CREATE USER 'gemartin'@'localhost' IDENTIFIED BY '12345';`
+
+		`GRANT ALL PRIVILEGES ON wp_database.* TO 'gemartin'@'localhost';`
+
+		`FLUSH PRIVILEGES;`
+
+		`exit`
+
+4. php
+
+	1. `sudo apt install php-cgi php-mysql`
+
+5. Wordpress setup
+
+	1. `cd /var/www/html`
+
+	2. `cp wp-config-sample.php wp-config.php`
+
+	3. `sudo lighty-enable-mod fastcgi`
+
+	4. `sudo lighty-enable-mod fastcgi-php`
+
+	5. `sudo service lighttpd force-reload`
+
+	6. `localhost` in browser
+
+6. VSFTPD setup
+
+	1. `apt install vsftpd`
+
+	2. `sudo nano /etc/vsftpd.conf`
+
+	```
+	listen=YES
+	listen_ipv6=NO
+
+	anonymous_enable=NO
+	local_enable=YES
+	write_enable=YES
+
+	chroot_local_user=YES
+	allow_writeable_chroot=YES
+
+	pasv_enable=YES
+	pasv_min_port=10000
+	pasv_max_port=10100
+	```
+
+	3. `ftp localhost`
+
+	5. `firewall`
+
+	```
+	sudo ufw allow 21/tcp
+	sudo ufw allow 10000:10100/tcp
+	sudo ufw reload
+	```
+
+	6. `config`
+
+	```
+	sudo chown ftpuser:ftpuser /home/ftpuser
+	sudo chmod 755 /home/ftpuser
+	```
+
+	7. `security`
+
+	```
+	ssl_enable=YES
+	rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+	rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+	```
+
+	8. 

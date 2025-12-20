@@ -38,7 +38,7 @@ At the server startup, the script will display some information on all terminals
 
 4. /usr/sbin/ufw status
 
-## Formats
+## Formats 
 
 ```bash
 Broadcast message from root@wil (tty1) (Sun Apr 25 15:45:00 2021):
@@ -116,6 +116,6 @@ EOF
 
 1. go to vdi location
 
-2. run `shasum vm.vdi`
+2. run `sha1sum vm.vdi`
 
 3. voila

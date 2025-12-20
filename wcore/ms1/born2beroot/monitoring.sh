@@ -27,9 +27,9 @@ cpupercent=$(vmstat 1 2 | awk 'END {printf "%.2f%%", 100 - $15}')
 
 lastboot=$(who -b | awk '{print $(NF - 1), $NF}')
 
-lvmuse=$(lsblk -f | grep -q "^lvm$" && echo yes || echo no)
+lvmuse=$(lsblk -f | grep -q "lvm" && echo yes || echo no)
 
-tcpcount=$(($(ss -tan state established | wc -l) - 1))
+tcpcount=$(ss -tan | grep -c ESTAB)
 
 usercount=$(users | tr ' ' '\n' | sort -u | wc -l)
 
@@ -37,14 +37,14 @@ read id ip <<< $(ip route | grep "default" | awk '{print $5, $9}')
 
 mac=$(ip link show $id | grep "link/ether" | awk '{print $2}')
 
-sudocount=$(journalctl _COMM=sudo | grep -c "COMMAND")
+sudocount=$(journalctl _COMM=sudo --no-pager | grep -c "COMMAND")
 
 wall << EOF
 #Architecture: $architecture
 #CPU physical: $phyCPU
 #vCPU: $virCPU
 #Memory Usage: $usedmem/${totalmem}MB (${mempercent}%)
-#Disk Usage: $usedMB/${totalMB}GB (${GBpercent}%)
+#Disk Usage: $usedMB/${totalMB}Gb (${GBpercent}%)
 #CPU load: $cpupercent
 #Last boot: $lastboot
 #LVM use: $lvmuse

@@ -231,17 +231,13 @@ systemctl list-timers
 
 ### security
 
-`sudo systemctl status unattended-upgrades` **security update active**
-
 `sudo systemctl status ufw` **firewall active**
 
 `sudo systemctl status apparmor` **apparmor active**
 
 `systemctl list-unit-files | grep apparmor` **security module startup**
 
-`systemctl is-enabled apparmor`
-
-`asudo aa-status` **apparmor rules**
+`sudo aa-status` **apparmor rules**
 
 `sudo ufw status` **firewall rules**
 

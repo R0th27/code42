@@ -66,8 +66,6 @@ This user has to belong to the user42 and sudo groups.
 
 `getent group <new>`
 
-`cut -d: -f1 /etc/group`
-
 ### manage user with group
 
 `sudo adduser user group`
@@ -87,6 +85,8 @@ This user has to belong to the user42 and sudo groups.
 `chmod 700 /var/log/sudo`
 
 `sudo visudo`
+
+`sudo l`
 
 ```
 Defaults passwd_tries=3

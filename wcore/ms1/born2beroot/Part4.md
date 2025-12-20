@@ -62,6 +62,8 @@ This user has to belong to the user42 and sudo groups.
 
 `sudo addgroup <new>`
 
+`sudo groupadd -r <new>`
+
 `getent group <new>`
 
 `cut -d: -f1 /etc/group`

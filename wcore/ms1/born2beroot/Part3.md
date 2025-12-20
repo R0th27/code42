@@ -121,16 +121,27 @@ to verify `chage -l user`
 `sudo nano /etc/pam.d/common-password`
 
 ```
-password requisite pam_pwquality.so \
-retry=3 \
-minlen=10 \
-ucredit=-1 \
-lcredit=-1 \
-dcredit=-1 \
-maxrepeat=3 \
-usercheck=1 \
-difof=7 \
+password        [success=1 default=ignore]      pam_succeed_if.so uid=0
+password        requisite                       pam_pwquality.so retry=3 dcredit=-1 difok=7 lcredit=-1 maxrepeat=3 minlen=10 ucredit=-1 usercheck=1 enforce_for_root
+password        requisite                       pam_pwquality.so retry=3 dcredit=-1 difok-7 lcredit=-1 maxrepeat=3 minlen=10 ucredit=-1 usercheck=1 difok=7
+
 ```
+
+```
+password        [success=1 default=ignore]      pam_succeed_if.so uid=0
+password        requisite                       pam_pwquality.so retry=3 dcredit=-1 difok=7 lcredit=-1 maxrepeat=3 minlen=10 ucredit=-1 usercheck=1 enforce_for_root
+password        requisite                       pam_pwquality.so retry=3 dcredit=-1 difok-7 lcredit=-1 maxrepeat=3 minlen=10 ucredit=-1 usercheck=1 difok=7
+password        [success=1 default=ignore]      pam_unix.so obscure try_first_pass yescrypt
+# here's the fallback if no module succeeds
+password        requisite                       pam_deny.so
+# prime the stack with a positive return value if there isn't one already;
+# this avoids us returning an error just because nothing sets a success code
+# since the modules above will each just jump around
+password        required                        pam_permit.so
+
+```
+
+`sudo -i` for root access during editing serious pam
 
 `enforce_for_root` is excluded according to born2beroot
 

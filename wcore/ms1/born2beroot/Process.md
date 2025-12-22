@@ -150,7 +150,7 @@ var/log is 4G
 		Defaults badpass_message="Try Again"
 		Defaults logfile="/var/log/sudo/sudo.log"
 		Defaults log_input, log_output
-		Defaults iologdir="/var/log/sudo"
+		Defaults iolog_dir="/var/log/sudo"
 		Defaults requiretty
 		Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
 		```
@@ -181,7 +181,7 @@ var/log is 4G
 
 	3. `password [success=1 default=ignore] pam_succeed_if.so uid=0`
 
-	4. `password requisite pam_pwquality.so retry=3 enforcing=1 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 maxrepear=3 usercheck=1 difok=7`
+	4. `password requisite pam_pwquality.so retry=3 enforcing=1 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 maxrepeat=3 usercheck=1 difok=7`
 
 	5. `password requisite pam_pwquality.so retry=3 enforcing=1 minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 maxrepeat=3 usercheck=1`
 
@@ -309,44 +309,41 @@ var/log is 4G
 	```bash
 	#!/bin/bash
 
-	architecture=$(uname -a)
+	archi=$(uname -a)
 
-	phyCPU=$(grep "physical id" /proc/cpuinfo | sort -u | wc -l)
+	pcpu=$(grep "physical id" /proc/cpuinfo | sort -u | wc -l)
 
-	virCPU=$(grep "processor" /proc/cpuinfo | wc -l)
+	vcpu=$(grep "processor" /proc/cpuinfo | wc -l)
 
 	read totalmem usedmem <<< $(free -m | awk '/Mem:/ {print $2, $3}')
 
-	mempercent=$(echo "scale=2; $usedmem/$totalmem*100" | bc)
+	mempercent=$(awk -v u=$usedmem -v t=$totalmem 'BEGIN {printf "(%.2f%%)", u/t*100}')
 
-	read totalMB usedMB <<< $(df -m -x tmpfs -x devtmpfs | awk '$1 ~ "^/dev/" && $6 != "/boot" && $6 != "/boot/efi" {u+=$3; t+=$2} END {print t, u}'
-	)
+	read totalmb usedmb gbpercent<<< $(df -m -x tmpfs -x devtmpfs | awk '$1 ~ "/dev/" &>
 
-	GBpercent=$(echo "scale=2; $usedMB/$totalMB*100" | bc)
-
-	if [ $totalMB -gt 1024 ]; then
-		totalMB=$(echo "scale=1; $totalMB/1024" | bc);
+	if [ $totalmb -gt 1024 ]; then
+			totalmb=$(awk -v i=$totalmb 'BEGIN {printf "%.1f", i/1024}')
 	fi
 
-	if [ $usedMB -gt 1024 ]; then
-		usedMB=$(echo "scale=1; $usedMB/1024" | bc);
+	if [ $usedmb -gt 1024 ]; then
+			usedmb=$(awk -v i=$usedmb 'BEGIN {printf "%.1f", i/1024}')
 	fi
 
-	cpupercent=$(vmstat 1 2 | awk 'END {printf "%.2f%%", 100 - $15}')
+	cpuload=$(vmstat 1 2 | awk 'END {printf "%.1f%%", 100 - $15} ' )
 
-	lastboot=$(who -b | awk '{print $(NF - 1), $NF}')
+	lastb=$(who -b | awk '{print $(NF - 1), $NF}')
 
-	lvmuse=$(lsblk -o TYPE | grep -q "^lvm$" && echo yes || echo no)
+	lvm=$(lsblk -o TYPE | grep -q "^lvm$" && echo yes || echo no)
 
-	tcpcount=$(ss -tan | grep -c ESTAB)
+	tcp=$(ss -tan | grep -c ESTAB)
 
-	usercount=$(users | tr ' ' '\n' | sort -u | wc -l)
+	user=$(users | tr ' ' '\n' | sort -u | wc -l)
 
-	read id ip <<< $(ip route | grep "default" | awk '{print $5, $9}')
+	read id ip <<< $(ip route | grep default | awk '{print $5, $9}')
 
 	mac=$(ip link show $id | grep "link/ether" | awk '{print $2}')
 
-	sudocount=$(journalctl _COMM=sudo --no-pager | grep -c "COMMAND")
+	sudo=$(journalctl _COMM=sudo --no-pager | grep -c COMMAND)
 
 	wall << EOF
 	#Architecture: $architecture
@@ -372,7 +369,7 @@ var/log is 4G
 
 	3. `sudo crontab -u others -e`
 
-	4. `*/10 * * * * /usr/local/bin/hi.sh`
+	4. `*/10 * * * * /usr/local/bin/monitoring.sh`
 
 ## Lighttpd Wordpress MariaDB PHP FTP
 
@@ -418,7 +415,9 @@ var/log is 4G
 
 3. mariaDB
 
-	1. `run mysql_secure_installation`
+	1. `apt install mariadb-server`
+
+	2. `run mysql_secure_installation`
 	```	
 	Switch to unix_socket autentication? → N 
 	Change the root password? → N
@@ -428,7 +427,7 @@ var/log is 4G
 	Reload privilege tables now? → Y
 	```
 
-	2. `mariadb`
+	3. `mariadb`
 
 		`CREATE DATABASE wp_database;`
 
@@ -444,7 +443,7 @@ var/log is 4G
 
 4. php
 
-	1. `sudo apt install php-cgi php-mysql`
+	1. `sudo apt install php php-cgi php-mysql`
 
 5. Wordpress setup
 
@@ -506,5 +505,3 @@ var/log is 4G
 	rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
 	rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
 	```
-
-	8. 

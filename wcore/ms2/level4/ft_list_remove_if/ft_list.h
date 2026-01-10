@@ -1,28 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   flood_fill.h                                       :+:      :+:    :+:   */
+/*   ft_list.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/10 01:10:04 by htoe              #+#    #+#             */
-/*   Updated: 2026/01/10 07:57:14 by htoe             ###   ########.fr       */
+/*   Created: 2026/01/10 21:48:30 by htoe              #+#    #+#             */
+/*   Updated: 2026/01/10 21:49:34 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FLOOD_FILL_H
-# define FLOOD_FILL_H
-
-typedef struct	s_point
-{
-	int	x;
-	int	y;
-}				t_point;
+#ifndef FT_LIST_H
+# define FT_LIST_H
 
 # include <stdio.h>
-# include <unistd.h>
 # include <stdlib.h>
+# include <unistd.h>
 
-void	flood_fill(char **tab, t_point size, t_point begin);
+typedef struct	s_list
+{
+	struct s_list	*next;
+	void			*data;
+}				t_list;
 
 #endif

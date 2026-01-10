@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   flood_fill.h                                       :+:      :+:    :+:   */
+/*   ft_list_foreach.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: htoe <htoe@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/10 01:10:04 by htoe              #+#    #+#             */
-/*   Updated: 2026/01/10 07:57:14 by htoe             ###   ########.fr       */
+/*   Created: 2026/01/10 07:55:50 by htoe              #+#    #+#             */
+/*   Updated: 2026/01/10 08:00:16 by htoe             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FLOOD_FILL_H
-# define FLOOD_FILL_H
+#include <unistd.h>
 
-typedef struct	s_point
+void	ft_list_foreach(t_list *begin_list, void (*f)(void *))
 {
-	int	x;
-	int	y;
-}				t_point;
+	while (begin_list)
+	{
+		if (begin_list -> data)
+			(*f)(begin_list -> data);
+		begin_list = begin_list -> next;
+	}
+}
 
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
-
-void	flood_fill(char **tab, t_point size, t_point begin);
-
-#endif
